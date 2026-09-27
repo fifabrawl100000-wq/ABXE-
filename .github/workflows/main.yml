@@ -1,0 +1,30 @@
+name: Build ABXE
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Make APK
+        run: |
+          npm install -g @capacitor/cli
+          npm init -y
+          npx cap init ABXE com.abxe.app --web-dir=. --npm-client npm
+          npm install @capacitor/android
+          npx cap add android
+          npx cap copy
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+      - name: Save APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ABXE-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
