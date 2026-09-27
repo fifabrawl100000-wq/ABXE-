@@ -1,0 +1,9 @@
+{
+  "name":"ABXE — Puzzle AI",
+  "short_name":"ABXE",
+  "start_url":"./index.html",
+  "display":"standalone",
+  "background_color":"#05071a",
+  "theme_color":"#070b24",
+  "icons":[]
+}

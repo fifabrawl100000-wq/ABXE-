@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070b24">
+<meta name="description" content="ABXE — adaptive puzzle AI">
+<link rel="manifest" href="manifest.json">
+<title>ABXE — Puzzle AI</title>
+<style>
+:root{
+  --bg:#05071a;--panel:#0a1030cc;--line:#2768ff;--cyan:#52eaff;--violet:#9d55ff;
+  --text:#eef7ff;--muted:#8ea6d5;--danger:#ff4e76;--ok:#5df6c0;
+}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);background:#040616}
+body{overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-2;background:
+radial-gradient(circle at 75% 18%,#244bff55,transparent 25%),
+radial-gradient(circle at 18% 75%,#8b24ff33,transparent 30%),
+linear-gradient(145deg,#03051a,#09072b 55%,#020511)}
+body:after{content:"";position:fixed;inset:-20%;z-index:-3;background:
+radial-gradient(circle at 50% 50%,transparent 0 19%,#ffffff08 20%,transparent 21%),
+radial-gradient(circle at 72% 28%,#000 0 7%,#172a7b 7.3%,transparent 13%);
+filter:blur(8px);opacity:.8}
+.app{max-width:520px;margin:auto;min-height:100vh;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom)}
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 5px 10px}
+.brand{display:flex;gap:10px;align-items:center}.brand-mark{font-size:28px;color:#42eaff;text-shadow:0 0 16px #42eaff}.brand h1{font-size:25px;letter-spacing:4px;margin:0}.brand small{display:block;color:#70a9ff;letter-spacing:3px;font-size:9px}
+button{font:inherit;color:inherit;border:0;cursor:pointer}
+.icon-btn,.lang{background:#08102cdd;border:1px solid #2768ff88;border-radius:13px;padding:9px 12px;color:#a9d9ff}
+.lang{font-size:12px}
+.hero{position:relative;border:1px solid #2e64ff66;border-radius:28px;overflow:hidden;min-height:480px;background:#05081dcc;box-shadow:0 0 45px #1752ff1f}
+.hero-bg{position:absolute;inset:0;background-image:linear-gradient(180deg,#0000 50%,#03051c 100%),url("assets/abxe.png");background-size:cover;background-position:center top;filter:saturate(1.1)}
+.hero-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#04061a00 38%,#05071af5 90%)}
+.hero-content{position:relative;z-index:1;padding:18px}
+.stats{display:flex;gap:9px}.stat{background:#07112bcc;border:1px solid #3476ff77;border-radius:12px;padding:8px 10px;min-width:92px}.stat b{display:block;font-size:14px}.stat span{font-size:10px;color:#86a7db}
+.quote{margin-top:265px;max-width:300px;color:#c9dcff;border-left:2px solid #4fe7ff;padding-left:12px;font-size:13px;line-height:1.5}
+.persona{position:absolute;right:15px;bottom:120px;background:#07112ce6;border:1px solid #4b7dff77;border-radius:15px;padding:10px 12px;text-align:right;font-size:11px}.persona b{font-size:13px;color:#6befff}
+.start{width:100%;margin-top:12px;padding:18px;border-radius:18px;background:linear-gradient(90deg,#075bff,#5a24ff);border:1px solid #62eaffaa;box-shadow:0 0 30px #2c66ff55;font-weight:900;letter-spacing:2px;font-size:17px}
+.screen{display:none}.screen.active{display:block}
+.card{background:#07102ce8;border:1px solid #275cff77;border-radius:22px;padding:15px;margin:12px 0;box-shadow:0 15px 45px #0005}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.muted{color:var(--muted);font-size:12px}
+.chat{min-height:390px;max-height:55vh;overflow:auto;padding:4px}.msg{display:flex;gap:9px;margin:12px 0}.avatar{width:34px;height:34px;border-radius:10px;object-fit:cover;border:1px solid #51eaff88}.bubble{padding:11px 12px;border-radius:14px;background:#0b1839;border:1px solid #2768ff55;font-size:14px;line-height:1.45;max-width:88%}.user{justify-content:flex-end}.user .bubble{background:#17235b;border-color:#7656ff66}
+.input{display:flex;gap:8px;margin-top:10px}.input input{flex:1;background:#050a20;border:1px solid #3270ff88;border-radius:15px;color:white;padding:14px;outline:none}.send{width:50px;border-radius:15px;background:#1665ff;font-size:20px}.hint{background:#111a36;border:1px solid #49eaff55;color:#8deeff;border-radius:12px;padding:10px;margin-top:8px;font-size:12px}
+.result{padding:13px;border-radius:14px;margin-top:10px;font-weight:700}.good{background:#0a392d;color:#7fffd7;border:1px solid #41e4b2}.bad{background:#3b1422;color:#ff94ae;border:1px solid #ff4e76}
+.bottom{position:sticky;bottom:8px;display:flex;justify-content:space-around;gap:4px;padding:8px;background:#05091eea;border:1px solid #274cff66;border-radius:19px;backdrop-filter:blur(14px);margin:15px 0}.nav{background:none;color:#7088bd;padding:7px;font-size:11px}.nav.active{color:#67eaff}.nav span{display:block;font-size:19px;margin-bottom:3px}
+.progress{height:8px;border-radius:8px;background:#101a39;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#28dfff,#7650ff);width:24%}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#08122d;border:1px solid #4feaff88;border-radius:12px;padding:11px 14px;opacity:0;pointer-events:none;transition:.25s;z-index:5}.toast.show{opacity:1}
+.rtl{direction:rtl}.rtl .quote{border-left:0;border-right:2px solid #4fe7ff;padding-left:0;padding-right:12px}.rtl .persona{text-align:left;right:auto;left:15px}
+@media(min-width:700px){body{padding:20px}.app{border:1px solid #1d4b9a;border-radius:30px;box-shadow:0 0 80px #1439aa44;overflow:hidden}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand"><div class="brand-mark">◈</div><div><h1>ABXE</h1><small>PUZZLE AI</small></div></div>
+    <div style="display:flex;gap:7px"><button class="lang" id="lang">عربي</button><button class="icon-btn" id="settings">⚙</button></div>
+  </header>
+
+  <main id="home" class="screen active">
+    <section class="hero">
+      <div class="hero-bg"></div><div class="hero-content">
+        <div class="stats"><div class="stat"><b id="level">LEVEL 01</b><span id="xpText">XP 0 / 100</span></div><div class="stat"><b>STREAK</b><span id="streak">0 days</span></div></div>
+        <div class="quote" id="quote">You came back. Good. Let's see if your mind can keep up with me.</div>
+        <div class="persona"><b>ABXE</b><br><span id="persona">Cold • Focused • Intelligent</span></div>
+        <button class="start" id="start">START CHALLENGE ›</button>
+      </div>
+    </section>
+  </main>
+
+  <main id="challenge" class="screen">
+    <div class="card">
+      <div class="row"><div><b id="challengeTitle">ABXE CHALLENGE</b><div class="muted" id="difficulty">Logic • Level 1</div></div><div id="reward">+20 XP</div></div>
+      <div class="progress" style="margin-top:12px"><i id="bar"></i></div>
+    </div>
+    <section class="card chat" id="chat"></section>
+    <section class="card">
+      <div class="row"><button class="hint" id="hint">💡 HINT <span id="hintCount">3/3</span></button><span class="muted" id="attempts">Attempts: 0</span></div>
+      <div class="input"><input id="answer" autocomplete="off" placeholder="Type your answer..."><button class="send" id="send">➤</button></div>
+      <div id="result"></div>
+    </section>
+  </main>
+
+  <main id="progressScreen" class="screen">
+    <section class="card"><h2>Progress</h2><p class="muted">ABXE adapts future challenges to your performance.</p><div class="row"><b id="level2">Level 1</b><b id="xp2">0 XP</b></div><div class="progress" style="margin-top:10px"><i id="bar2"></i></div></section>
+    <section class="card"><h3>ABXE profile</h3><p class="muted">Cold. Focused. Intelligent.</p><p>Errors remembered: <b id="errors">0</b></p><p>Challenges solved: <b id="solved">0</b></p></section>
+  </main>
+
+  <main id="daily" class="screen">
+    <section class="card"><h2>Daily Challenge</h2><p class="muted">A fresh puzzle every day.</p><button class="start" id="dailyBtn">ENTER DAILY ›</button></section>
+  </main>
+
+  <main id="profile" class="screen">
+    <section class="card"><h2>Profile</h2><p class="muted">Your progress is stored on this device.</p><div class="row"><b>Level</b><span id="pLevel">1</span></div><div class="row"><b>Total XP</b><span id="pXP">0</span></div></section>
+  </main>
+
+  <nav class="bottom">
+    <button class="nav active" data-go="home"><span>⌂</span>Home</button>
+    <button class="nav" data-go="challenge"><span>◌</span>Chat</button>
+    <button class="nav" data-go="progressScreen"><span>♜</span>Progress</button>
+    <button class="nav" data-go="daily"><span>◫</span>Daily</button>
+    <button class="nav" data-go="profile"><span>○</span>Profile</button>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const puzzles=[
+ {q:"I am thinking of a number. Double it and add 6, and you get 20. What is the number?",a:["7"],h:"Work backwards: remove 6, then halve the result.",d:"Logic"},
+ {q:"A room has 3 switches outside and 3 lamps inside. You may enter the room only once. How can you identify which switch controls which lamp?",a:["turn on","heat","touch"],h:"Light can leave a trace even after it is switched off.",d:"Lateral thinking"},
+ {q:"What gets wetter the more it dries?",a:["towel","a towel"],h:"You use it after a shower.",d:"Classic"},
+ {q:"A clock shows 3:15. What is the smaller angle between its hands?",a:["7.5","7.5 degrees"],h:"The minute hand is at 90°. The hour hand has moved past 3.",d:"Observation"},
+ {q:"You have 8 identical-looking balls. One is heavier. With a balance scale, what is the minimum number of weighings needed to guarantee finding it?",a:["2","two"],h:"Split them into groups as evenly as possible.",d:"Deduction"}
+];
+
+let state=JSON.parse(localStorage.getItem("abxeState")||'{"xp":0,"level":1,"solved":0,"errors":0,"streak":0,"last":0,"hints":3}');
+let current=0, attempts=0;
+function save(){localStorage.setItem("abxeState",JSON.stringify(state)); updateUI()}
+function updateUI(){
+ const need=state.level*100, pct=Math.min(100,state.xp/need*100);
+ ["level","level2","pLevel"].forEach(id=>{let e=$("#"+id);if(e)e.textContent=id==="level"?`LEVEL ${String(state.level).padStart(2,"0")}`:state.level});
+ $("#xpText").textContent=`XP ${state.xp} / ${need}`; $("#xp2").textContent=state.xp+" XP"; $("#bar2").style.width=pct+"%";
+ $("#solved").textContent=state.solved; $("#errors").textContent=state.errors; $("#pXP").textContent=state.xp;
+ $("#streak").textContent=state.streak+" days";
+}
+function toast(t){let e=$("#toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200)}
+function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));$("#"+id).classList.add("active");document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("active",x.dataset.go===id))}
+function addMsg(text,user=false){let c=$("#chat");let row=document.createElement("div");row.className="msg "+(user?"user":"");row.innerHTML=user?`<div class="bubble">${escape(text)}</div>`:`<img class="avatar" src="assets/abxe.png"><div class="bubble">${text}</div>`;c.appendChild(row);c.scrollTop=c.scrollHeight}
+function escape(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function startChallenge(idx=null){
+ current=idx===null?Math.min(state.level-1,puzzles.length-1):idx; attempts=0; $("#attempts").textContent="Attempts: 0";$("#result").innerHTML="";$("#chat").innerHTML="";
+ const p=puzzles[current]; $("#difficulty").textContent=p.d+" • Level "+state.level; $("#bar").style.width=Math.min(100,state.level/30*100)+"%";
+ addMsg(`Let's see how sharp your mind is. ${p.q}`); show("challenge");
+}
+function submit(){
+ const inp=$("#answer"), val=inp.value.trim().toLowerCase(); if(!val)return;
+ attempts++;$("#attempts").textContent="Attempts: "+attempts;addMsg(inp.value,true);inp.value="";
+ const p=puzzles[current], ok=p.a.some(a=>val===a||val.includes(a));
+ if(ok){
+   const gain=20+Math.max(0,3-attempts)*5; state.xp+=gain;state.solved++;
+   if(state.xp>=state.level*100){state.xp-=state.level*100;state.level++;addMsg(`Correct. ${gain} XP. You leveled up. Don't get comfortable.`)}
+   else addMsg(`Correct. +${gain} XP. That was acceptable.`);
+   $("#result").innerHTML=`<div class="result good">✓ Correct · +${gain} XP</div>`; save();
+ }else{
+   state.errors++; addMsg(attempts>=2?"Still wrong. You're making this easier for me.":"No. Think again.");
+   $("#result").innerHTML=`<div class="result bad">✕ Not quite. Try again.</div>`;save();
+ }
+}
+$("#start").onclick=()=>startChallenge();
+$("#send").onclick=submit;$("#answer").addEventListener("keydown",e=>{if(e.key==="Enter")submit()});
+$("#hint").onclick=()=>{let p=puzzles[current];if(state.hints>0){state.hints--;$("#hintCount").textContent=state.hints+"/3";addMsg("Fine. One hint: "+p.h);save()}else toast("No hints left.")};
+$("#dailyBtn").onclick=()=>startChallenge(new Date().getDate()%puzzles.length);
+$("#lang").onclick=()=>{let ar=!$("#app").classList.contains("rtl");$("#app").classList.toggle("rtl",ar);$("#lang").textContent=ar?"EN":"عربي";toast(ar?"العربية مفعلة":"English enabled")};
+$("#settings").onclick=()=>toast("ABXE settings will expand in the next build.");
+document.querySelectorAll(".nav").forEach(n=>n.onclick=()=>show(n.dataset.go));
+updateUI();
+</script>
+</body></html>
