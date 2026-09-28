@@ -1,0 +1,31 @@
+name: ABXE APK Builder
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ABXE
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Make Gradle executable
+        run: chmod +x gradlew
+
+      - name: Build ABXE APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload ABXE APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ABXE-APK
+          path: app/build/outputs/apk/debug/*.apk
